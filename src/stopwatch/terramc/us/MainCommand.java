@@ -16,8 +16,8 @@ import java.util.UUID;
 
 public class MainCommand implements CommandExecutor {
 
-    int duration;
-    int durRemaining;
+    private int duration;
+    private int durRemaining;
 
     private final HashMap<UUID, Boolean> runningMap = new HashMap<>();
 
