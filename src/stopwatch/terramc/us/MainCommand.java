@@ -15,15 +15,14 @@ import java.time.DateTimeException;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalUnit;
 import java.util.*;
 
 
 public class MainCommand implements CommandExecutor {
 
     private final HashMap<UUID, Boolean> runningMap = new HashMap<>();
-    private LocalTime curTime = LocalTime.now();
     private LocalTime duration;
+    private LocalTime timeLeft;
     private float timer = 1;
 
     private final Main plugin;
@@ -47,10 +46,8 @@ public class MainCommand implements CommandExecutor {
 
                 if (runningMap.get(player.getUniqueId())) {
 
-                    // TODO
-
-                    //player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.prefix + "&9Time remaining: &a"
-                            //+ /*hours +/* " &ehours &a" + /*minutes +*/ " &eminutes &a" + secRemaining + " &eseconds."));
+                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.prefix + "&9Time remaining: &a"
+                            + timeLeft.getHour() + " &ehours &a" + timeLeft.getMinute() + " &eminutes &a" + timeLeft.getSecond() + " &eseconds."));
 
                 } else {
                     player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.prefix
@@ -84,6 +81,8 @@ public class MainCommand implements CommandExecutor {
                     try {
                         LocalTime inputTime = LocalTime.parse(input, dtf);
                         float ticks = inputTime.toSecondOfDay();
+                        duration = inputTime;
+                        timeLeft = duration;
 
                         int hours = inputTime.getHour(); int minutes = inputTime.getMinute(); int seconds = inputTime.getSecond();
 
@@ -91,7 +90,6 @@ public class MainCommand implements CommandExecutor {
 
                         runningMap.put(player.getUniqueId(), true);
                         player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 1, 3);
-                        player.sendMessage("ticks: " + ticks);
                         timer(player, ticks);
 
                     } catch (DateTimeException e) {
@@ -127,11 +125,11 @@ public class MainCommand implements CommandExecutor {
         new BukkitRunnable() {
             @Override
             public void run() {
+
                 try {
 
                     if (timer < ticks) {
                         timer++;
-                        player.sendMessage("ticked");
                     }
 
                     else if (timer == ticks) {
@@ -155,6 +153,8 @@ public class MainCommand implements CommandExecutor {
                         this.cancel();
                         return;
                     }
+
+                    timeLeft = timeLeft.plusSeconds(-1);
 
                 } catch (IllegalStateException e) {
                     player.sendMessage("Illegal state exception");
