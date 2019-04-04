@@ -88,7 +88,7 @@ public class MainCommand implements CommandExecutor {
                     String[] inputSplit = input.split(":");
 
                     //if(){git test}
-                    //else if () {}
+                    //else if () {herlo weurl}
                     //else if () {}
                     //else {}
 
