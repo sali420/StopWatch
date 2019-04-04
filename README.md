@@ -2,9 +2,7 @@
 
 Spigot plugin to handle all your timing related needs!
 
-Planned: 
-* Alarm clock
-* Digital clock (Display the servers current time and the minecraft world time in a bossbar, exp bar, title, scoreboard or something else)
+Planned:
 * Admins: Repeating commands (Set a command to be run x amount of times, every x amount of minutes/hours)
 * Admins: Command to kill all running timer-tasks in-case the plugin turns out to be a laggy mess 
 * /stopwatch mode (Alarm/Timer/etc)
@@ -14,6 +12,11 @@ Planned:
 * More
 
 Todo:
-* Update argument logic to reflect new coming features
 * Fix formatting issues
+* Optimize time remaining loop
+* Update argument logic to reflect new coming features
+* Alarm clock
+* Digital clock
+* Permissions
+* Config.myl - Editable prefix, sounds & alert alert message
 * If possible, allow the following format to be valid: "5h20m30s"

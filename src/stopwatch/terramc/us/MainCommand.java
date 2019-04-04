@@ -87,11 +87,6 @@ public class MainCommand implements CommandExecutor {
                     String input = args[1];
                     String[] inputSplit = input.split(":");
 
-                    //if(){git test}
-                    //else if () {herlo weurl}
-                    //else if () {ahh}
-                    //else {}
-
                     int hours;
                     int minutes;
                     int seconds;
