@@ -12,7 +12,6 @@ Planned:
 * More
 
 Todo:
-* Fix formatting issues
 * Update argument logic to reflect new coming features
 * Alarm clock
 * Digital clock
