@@ -10,8 +10,10 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
-import java.util.HashMap;
-import java.util.UUID;
+import java.time.DateTimeException;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
 
 public class MainCommand implements CommandExecutor {
@@ -84,39 +86,27 @@ public class MainCommand implements CommandExecutor {
 
                 if (args.length == 1) { // if they dont add a duration
                     player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.prefix + "You need to enter a duration. Type /stopwatch to see an example."));
-                } else if (args.length == 2 && args[1].length() >= 5 && args[1].length() <= 8 && !runningMap.get(player.getUniqueId())) { // if they do add a duration
-                    String input = args[1];
-                    String[] inputSplit = input.split(":");
+                }
 
-                    int hours;
-                    int minutes;
-                    int seconds;
+                if (args.length == 2) { // if they provide a duration
+
+                    String input = args[1];
+                    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm:ss");
 
                     try {
-                        hours = Integer.parseInt(inputSplit[0]);
-                        minutes = Integer.parseInt(inputSplit[1]);
-                        seconds = Integer.parseInt(inputSplit[2]);
-
-                        hours = hours * plugin.hour;
-                        minutes = minutes * plugin.minute;
-                        seconds = seconds * plugin.second;
-
-                        duration = hours + minutes + seconds;
-                        player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.prefix + "Timer started for: " + "&a" + hours / 3600000 + " &7hours &a" + minutes / 60000 + " &7minutes &a" + seconds / 1000 + " &7seconds."));
+                        LocalTime inputTime = LocalTime.parse(input, dtf);
+                        int hours = inputTime.getHour(); int minutes = inputTime.getMinute(); int seconds = inputTime.getSecond();
+                        duration = hours * plugin.hour + minutes * plugin.minute + seconds * plugin.second;
+                        player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.prefix + "Timer started for: " + "&a" + hours + " &7hours &a" + minutes + " &7minutes &a" + seconds + " &7seconds."));
 
                         runningMap.put(player.getUniqueId(), true);
                         player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 1, 3);
                         timer(player);
-                    } catch (NumberFormatException n) {
-                        player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.prefix + "&cError: You have entered an invalid character or duration."));
+
+                    } catch (DateTimeException e) {
+                        player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.prefix + "&cError: Invalid format."));
                     }
 
-                } else if (runningMap.get(player.getUniqueId())) { // If they have a timer already goin'
-                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.prefix + "&cError: Timer already running."));
-                } else if (args.length == 2 && args[1].length() != 5) { // If they stupid as fuck
-                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.prefix + "&cError: Invalid format."));
-                } else if (args.length >= 3) { // If they stupid as fuck
-                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.prefix + "&cError: You have entered too many arguments. Type /stopwatch for an example."));
                 }
 
             } else if (args.length == 1 && args[0].equalsIgnoreCase("stop")) { // if they choose to do /stopwatch stop
