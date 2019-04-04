@@ -18,7 +18,6 @@ import java.util.*;
 
 public class MainCommand implements CommandExecutor {
 
-    private int duration;
     private int durRemaining;
 
     private final HashMap<UUID, Boolean> runningMap = new HashMap<>();
@@ -57,13 +56,15 @@ public class MainCommand implements CommandExecutor {
                             durRemaining = durRemaining - 60;
                             minutes++;
                         }
-                        else if (durRemaining >= 1) {
+                        else if (durRemaining > 1) {
                             durRemaining = durRemaining - 1;
                             seconds++;
                         }
                     }
 
-                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.prefix + "&9Time remaining: &a" + hours + " &ehours &a" + minutes + " &eminutes &a" + seconds + " &eseconds."));
+                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.prefix + "&9Time remaining: &a"
+                            + hours + " &ehours &a" + minutes + " &eminutes &a" + seconds + " &eseconds."));
+
                 } else {
                     player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.prefix
                             + "You have no timer set. Type /stopwatch menu for a list of available commands."));
@@ -96,12 +97,12 @@ public class MainCommand implements CommandExecutor {
                     try {
                         LocalTime inputTime = LocalTime.parse(input, dtf);
                         int hours = inputTime.getHour(); int minutes = inputTime.getMinute(); int seconds = inputTime.getSecond();
-                        duration = hours * plugin.hour + minutes * plugin.minute + seconds * plugin.second;
+                        int duration = hours * plugin.hour + minutes * plugin.minute + seconds * plugin.second;
                         player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.prefix + "Timer started for: " + "&a" + hours + " &7hours &a" + minutes + " &7minutes &a" + seconds + " &7seconds."));
 
                         runningMap.put(player.getUniqueId(), true);
                         player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 1, 3);
-                        timer(player);
+                        timer(player, duration);
 
                     } catch (DateTimeException e) {
                         player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.prefix + "&cError: Invalid format."));
@@ -128,7 +129,7 @@ public class MainCommand implements CommandExecutor {
 
     }
 
-    private void timer(Player player) { // Timer runnable
+    private void timer(Player player, int duration) { // Timer runnable
         new BukkitRunnable() {
             @Override
             public void run() {
