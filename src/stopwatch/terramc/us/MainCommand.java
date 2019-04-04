@@ -89,7 +89,7 @@ public class MainCommand implements CommandExecutor {
                     player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.prefix + "You need to enter a duration. Type /stopwatch to see an example."));
                 }
 
-                if (args.length == 2) { // if they provide a duration
+                if (args.length == 2 && !runningMap.get(player.getUniqueId())) { // if they provide a duration and dont have a timer running
 
                     String input = args[1];
                     DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm:ss");
@@ -108,6 +108,10 @@ public class MainCommand implements CommandExecutor {
                         player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.prefix + "&cError: Invalid format."));
                     }
 
+                }
+
+                else if (args.length == 2 && runningMap.get(player.getUniqueId())) {
+                    player.sendMessage(ChatColor.translateAlternateColorCodes('&',plugin.prefix + "&cError: Timer already running."));
                 }
 
             } else if (args.length == 1 && args[0].equalsIgnoreCase("stop")) { // if they choose to do /stopwatch stop
