@@ -19,7 +19,6 @@ import java.util.*;
 public class MainCommand implements CommandExecutor {
 
     private final HashMap<UUID, Boolean> runningMap = new HashMap<>();
-    private LocalTime duration;
     private LocalTime timeLeft;
     private float timer = 1;
 
@@ -79,12 +78,9 @@ public class MainCommand implements CommandExecutor {
                     try {
                         LocalTime inputTime = LocalTime.parse(input, dtf);
                         float ticks = inputTime.toSecondOfDay();
-                        duration = inputTime;
-                        timeLeft = duration;
+                        timeLeft = inputTime;
 
-                        int hours = inputTime.getHour(); int minutes = inputTime.getMinute(); int seconds = inputTime.getSecond();
-
-                        player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.prefix + "Timer started for: " + "&a" + hours + " &7hours &a" + minutes + " &7minutes &a" + seconds + " &7seconds."));
+                        player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.prefix + "Timer started for: " + "&a" + inputTime.getHour() + " &7hours &a" + inputTime.getMinute() + " &7minutes &a" + inputTime.getSecond() + " &7seconds."));
 
                         runningMap.put(player.getUniqueId(), true);
                         player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 1, 3);
