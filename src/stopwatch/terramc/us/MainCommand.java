@@ -54,9 +54,7 @@ public class MainCommand implements CommandExecutor {
                         } else if (durRemaining >= 60) {
                             durRemaining = durRemaining - 60;
                             minutes++;
-                        } else if (durRemaining >= 1) {
-                            durRemaining = durRemaining - 1;
-                            seconds++;
+                            seconds = durRemaining;
                         }
                     }
 
@@ -110,7 +108,7 @@ public class MainCommand implements CommandExecutor {
                         player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.prefix + "&cError: You have entered an invalid character or duration."));
                     }
 
-                } else if (args.length >= 1 && runningMap.get(player.getUniqueId()) == true) { // If they have a timer already goin'
+                } else if (runningMap.get(player.getUniqueId()) == true) { // If they have a timer already goin'
                     player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.prefix + "&cError: Timer already running."));
                 } else if (args.length == 2 && args[1].length() != 5) { // If they stupid as fuck
                     player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.prefix + "&cError: Invalid format."));

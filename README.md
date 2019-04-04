@@ -13,7 +13,6 @@ Planned:
 
 Todo:
 * Fix formatting issues
-* Optimize time remaining loop
 * Update argument logic to reflect new coming features
 * Alarm clock
 * Digital clock
