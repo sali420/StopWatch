@@ -1,5 +1,6 @@
 package stopwatch.terramc.us;
 
+import jdk.vm.ci.meta.Local;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -13,14 +14,17 @@ import org.bukkit.command.CommandSender;
 import java.time.DateTimeException;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalUnit;
 import java.util.*;
 
 
 public class MainCommand implements CommandExecutor {
 
-    private int durRemaining;
-
     private final HashMap<UUID, Boolean> runningMap = new HashMap<>();
+    private LocalTime curTime = LocalTime.now();
+    private LocalTime duration;
+    private float timer = 1;
 
     private final Main plugin;
 
@@ -43,27 +47,10 @@ public class MainCommand implements CommandExecutor {
 
                 if (runningMap.get(player.getUniqueId())) {
 
-                    int hours=0;
-                    int minutes=0;
-                    int seconds=0;
+                    // TODO
 
-                    while (durRemaining > 0) {
-                        if (durRemaining >= 3600) {
-                            durRemaining = durRemaining - 3600;
-                            hours++;
-                        }
-                        else if (durRemaining >= 60) {
-                            durRemaining = durRemaining - 60;
-                            minutes++;
-                        }
-                        else if (durRemaining > 1) {
-                            durRemaining = durRemaining - 1;
-                            seconds++;
-                        }
-                    }
-
-                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.prefix + "&9Time remaining: &a"
-                            + hours + " &ehours &a" + minutes + " &eminutes &a" + seconds + " &eseconds."));
+                    //player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.prefix + "&9Time remaining: &a"
+                            //+ /*hours +/* " &ehours &a" + /*minutes +*/ " &eminutes &a" + secRemaining + " &eseconds."));
 
                 } else {
                     player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.prefix
@@ -96,13 +83,16 @@ public class MainCommand implements CommandExecutor {
 
                     try {
                         LocalTime inputTime = LocalTime.parse(input, dtf);
+                        float ticks = inputTime.toSecondOfDay();
+
                         int hours = inputTime.getHour(); int minutes = inputTime.getMinute(); int seconds = inputTime.getSecond();
-                        int duration = hours * plugin.hour + minutes * plugin.minute + seconds * plugin.second;
+
                         player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.prefix + "Timer started for: " + "&a" + hours + " &7hours &a" + minutes + " &7minutes &a" + seconds + " &7seconds."));
 
                         runningMap.put(player.getUniqueId(), true);
                         player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 1, 3);
-                        timer(player, duration);
+                        player.sendMessage("ticks: " + ticks);
+                        timer(player, ticks);
 
                     } catch (DateTimeException e) {
                         player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.prefix + "&cError: Invalid format."));
@@ -133,47 +123,43 @@ public class MainCommand implements CommandExecutor {
 
     }
 
-    private void timer(Player player, int duration) { // Timer runnable
+    private void timer(Player player, float ticks) { // Timer runnable
         new BukkitRunnable() {
             @Override
             public void run() {
                 try {
-                    runningMap.put(player.getUniqueId(), true);
 
-                    int counter = 1;
-                    int dur = duration / 1000;
-
-                    while (counter < dur) {
-
-                        counter++;
-                        durRemaining = dur - counter;
-
-                        if (!runningMap.get(player.getUniqueId())) {
-                            durRemaining = 0;
-                            this.cancel();
-                            return;
-                        }
-
-                        if (!player.isOnline()) {
-                            runningMap.put(player.getUniqueId(), false);
-                            durRemaining = 0;
-                            this.cancel();
-                            return;
-                        }
-
-                        Thread.sleep(1000);
+                    if (timer < ticks) {
+                        timer++;
+                        player.sendMessage("ticked");
                     }
 
-                    runningMap.put(player.getUniqueId(), false);
-                    player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 1, 1);
-                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', "\n&4&l*** &e&lYOUR TIMER HAS FINISHED &4&l***\n "));
+                    else if (timer == ticks) {
+                        timer = 1;
+                        runningMap.put(player.getUniqueId(), false);
+                        player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 1, 1);
+                        player.sendMessage(ChatColor.translateAlternateColorCodes('&', "\n&4&l*** &e&lYOUR TIMER HAS FINISHED &4&l***\n "));
+                        this.cancel();
+                        return;
+                    }
 
-                } catch (InterruptedException e) {
-                    player.sendMessage("Please contact an administrator if you see this message and let them know which command you used.");
+                    if (!runningMap.get(player.getUniqueId())) {
+                        timer = 1;
+                        this.cancel();
+                        return;
+                    }
+
+                    if (!player.isOnline()) {
+                        timer = 1;
+                        runningMap.put(player.getUniqueId(), false);
+                        this.cancel();
+                        return;
+                    }
+
                 } catch (IllegalStateException e) {
                     player.sendMessage("Illegal state exception");
                 }
             }
-        }.runTaskAsynchronously(plugin);
+        }.runTaskTimerAsynchronously(plugin, 0, 20 );
     }
 }
