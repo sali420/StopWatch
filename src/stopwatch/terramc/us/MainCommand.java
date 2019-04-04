@@ -19,8 +19,7 @@ public class MainCommand implements CommandExecutor {
     int duration;
     int durRemaining;
 
-    public HashMap<UUID, Integer> taskMap = new HashMap<>();
-    public HashMap<UUID, Boolean> runningMap = new HashMap<>();
+    private final HashMap<UUID, Boolean> runningMap = new HashMap<>();
 
     private final Main plugin;
 
@@ -36,13 +35,12 @@ public class MainCommand implements CommandExecutor {
 
             Player player = (Player) sender;
 
-            if (runningMap.get(player.getUniqueId()) == null) { // make sure our hashmap isnt returning null values!!
-                runningMap.put(player.getUniqueId(), false);
-            }
+            // make sure our hashmap isnt returning null values!!
+            runningMap.putIfAbsent(player.getUniqueId(), false);
 
             if (args.length == 0) { // Do this if they provide no arguments
 
-                if (runningMap.get(player.getUniqueId()) == true) {
+                if (runningMap.get(player.getUniqueId())) {
                     int hours = 0;
                     int minutes = 0;
                     int seconds = 0;
@@ -81,7 +79,7 @@ public class MainCommand implements CommandExecutor {
 
                 if (args.length == 1) { // if they dont add a duration
                     player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.prefix + "You need to enter a duration. Type /stopwatch to see an example."));
-                } else if (args.length == 2 && args[1].length() >= 5 && args[1].length() <= 8 && runningMap.get(player.getUniqueId()) != true) { // if they do add a duration
+                } else if (args.length == 2 && args[1].length() >= 5 && args[1].length() <= 8 && !runningMap.get(player.getUniqueId())) { // if they do add a duration
                     String input = args[1];
                     String[] inputSplit = input.split(":");
 
@@ -108,7 +106,7 @@ public class MainCommand implements CommandExecutor {
                         player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.prefix + "&cError: You have entered an invalid character or duration."));
                     }
 
-                } else if (runningMap.get(player.getUniqueId()) == true) { // If they have a timer already goin'
+                } else if (runningMap.get(player.getUniqueId())) { // If they have a timer already goin'
                     player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.prefix + "&cError: Timer already running."));
                 } else if (args.length == 2 && args[1].length() != 5) { // If they stupid as fuck
                     player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.prefix + "&cError: Invalid format."));
@@ -117,7 +115,7 @@ public class MainCommand implements CommandExecutor {
                 }
 
             } else if (args.length == 1 && args[0].equalsIgnoreCase("stop")) { // if they choose to do /stopwatch stop
-                if (runningMap.get(player.getUniqueId()) != false) { // If runningMap doesnt return false, they must have a timer running... stop it
+                if (runningMap.get(player.getUniqueId())) { // If they have a timer running... stop it
                     runningMap.put(player.getUniqueId(), false);
                     player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.prefix + "Timer stopped."));
                     player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 1, 2);
@@ -135,13 +133,11 @@ public class MainCommand implements CommandExecutor {
 
     }
 
-    public void timer(Player player) { // Timer runnable
+    private void timer(Player player) { // Timer runnable
         new BukkitRunnable() {
             @Override
             public void run() {
                 try {
-
-                    taskMap.put(player.getUniqueId(), getTaskId());
                     runningMap.put(player.getUniqueId(), true);
 
                     int counter = 1;
@@ -152,13 +148,13 @@ public class MainCommand implements CommandExecutor {
                         counter++;
                         durRemaining = dur - counter;
 
-                        if (runningMap.get(player.getUniqueId()) == false) {
+                        if (!runningMap.get(player.getUniqueId())) {
                             durRemaining = 0;
                             this.cancel();
                             return;
                         }
 
-                        if (player.isOnline() == false) {
+                        if (!player.isOnline()) {
                             runningMap.put(player.getUniqueId(), false);
                             durRemaining = 0;
                             this.cancel();
