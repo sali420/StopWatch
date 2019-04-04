@@ -41,18 +41,23 @@ public class MainCommand implements CommandExecutor {
             if (args.length == 0) { // Do this if they provide no arguments
 
                 if (runningMap.get(player.getUniqueId())) {
-                    int hours = 0;
-                    int minutes = 0;
-                    int seconds = 0;
+
+                    int hours=0;
+                    int minutes=0;
+                    int seconds=0;
 
                     while (durRemaining > 0) {
                         if (durRemaining >= 3600) {
                             durRemaining = durRemaining - 3600;
                             hours++;
-                        } else if (durRemaining >= 60) {
+                        }
+                        else if (durRemaining >= 60) {
                             durRemaining = durRemaining - 60;
                             minutes++;
-                            seconds = durRemaining;
+                        }
+                        else if (durRemaining >= 1) {
+                            durRemaining = durRemaining - 1;
+                            seconds++;
                         }
                     }
 
