@@ -89,7 +89,7 @@ public class MainCommand implements CommandExecutor {
 
                     //if(){git test}
                     //else if () {herlo weurl}
-                    //else if () {}
+                    //else if () {ahh}
                     //else {}
 
                     int hours;
