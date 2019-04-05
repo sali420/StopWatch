@@ -18,6 +18,8 @@ import java.util.*;
 
 public class MainCommand implements CommandExecutor {
 
+    private int mode;
+
     private final HashMap<UUID, Boolean> runningMap = new HashMap<>();
     private LocalTime timeLeft;
     private float timer = 1;
@@ -64,7 +66,28 @@ public class MainCommand implements CommandExecutor {
 
             }
 
-            if (args.length >= 1 && args[0].equalsIgnoreCase("start")) { // if they /stopwatch start and or add a duration
+            if (args.length >= 1 && args[0].equalsIgnoreCase(("mode"))) {
+
+                if (args.length == 1) {
+                    player.sendMessage(ChatColor.translateAlternateColorCodes('&',plugin.prefix + "&9&lMode Selection Menu."
+                    + "\n&7--- &cAvailable Modes &7---"
+                    + "\n&eTimer &7- Begins a timer, ticking every second. Stop the timer to record your final time."
+                    + "\n&eAlarm &7- Set an alarm for the desired amount of time. Will give an audible alert when the time is reached."));
+                }
+                else if (args.length == 2) {
+                    if (args[1].equalsIgnoreCase("timer")) {
+                        player.sendMessage(ChatColor.translateAlternateColorCodes('&',plugin.prefix + "&etimer &cmode &7selected."));
+                    }
+                    else if (args[1].equalsIgnoreCase("alarm")) {
+                        player.sendMessage(ChatColor.translateAlternateColorCodes('&',plugin.prefix + "&ealarm &cmode &7selected."));
+                    }
+                    else {
+                        player.sendMessage(ChatColor.translateAlternateColorCodes('&',plugin.prefix + "&cError: Invalid mode selected."));
+                    }
+                }
+            }
+
+            else if (args.length >= 1 && args[0].equalsIgnoreCase("start")) { // if they /stopwatch start and or add a duration
 
                 if (args.length == 1) { // if they dont add a duration
                     player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.prefix + "You need to enter a duration. Type /stopwatch to see an example."));
