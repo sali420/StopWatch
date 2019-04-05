@@ -19,7 +19,7 @@ import java.util.*;
 
 public class MainCommand implements CommandExecutor {
 
-    private int mode = 2; // temporary, will default to 1 once timer mode is finished
+    private int mode = 1; // temporary mode = timer
 
     private final HashMap<UUID, Boolean> runningMap = new HashMap<>();
     private DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm:ss");
@@ -63,7 +63,8 @@ public class MainCommand implements CommandExecutor {
                         + "\n&7--- &aAvailable Commands &7---"
                         + "\n&e/stopwatch &7- Displays the current time remaining until your timer finishes."
                         + "\n&e/stopwatch &9menu &7- Displays this help menu."
-                        + "\n&e/stopwatch &astart &bhr:min:sec &7- Starts a timer for the given duration. Example: /stopwatch start 0:5:30 starts a 5 min 30 sec timer."
+                        + "\n&e/stopwatch &9mode &b[alarm/timer] &7- Display the mode selection menu, or switch between modes by appending the mode you would like to switch to."
+                        + "\n&e/stopwatch &astart &bhh:mm:ss &7- Starts a timer/alarm. If in alarm mode, a duration must be provided using the hh:mm:ss format."
                         + "\n&e/stopwatch &cstop &7- Stops your currently running timer."));
 
             }
