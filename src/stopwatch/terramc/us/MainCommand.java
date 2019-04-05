@@ -6,6 +6,7 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import stopwatch.terramc.us.Main;
+import stopwatch.terramc.us.SPlayer;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -18,14 +19,10 @@ import java.util.*;
 
 public class MainCommand implements CommandExecutor {
 
-    private int mode = 1; // temporary mode = timer
+    private SPlayer sPlayer = new SPlayer();
 
     private final HashMap<UUID, Boolean> runningMap = new HashMap<>();
     private final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm:ss");
-    private final LocalTime defTime = LocalTime.parse("00:00:00", dtf);
-    private LocalTime timeLeft = defTime;
-    private LocalTime timeRan = defTime;
-    private LocalTime timeToRun = defTime;
 
     private final Main plugin;
 
@@ -36,17 +33,21 @@ public class MainCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if (sender instanceof Player) { // if our command user is a player
+
             Player player = (Player) sender;
+            sPlayer.setPlayerUUID(player.getUniqueId());
+
             runningMap.putIfAbsent(player.getUniqueId(), false); // make sure our hashmap isnt returning null values!!
+
             if (args.length == 0) { // Do this if they provide no arguments
                 if (runningMap.get(player.getUniqueId())) {
-                    if (mode == 1) {
+                    if (sPlayer.getMode() == 1) {
                         player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.prefix + "You have a timer running for: &a"
-                                + timeRan.getHour() + " &7hours &a" + timeRan.getMinute() + " &7minutes &a" + timeRan.getSecond() + " &7seconds."
+                                + sPlayer.getTimeRan().getHour() + " &7hours &a" + sPlayer.getTimeRan().getMinute() + " &7minutes &a" + sPlayer.getTimeRan().getSecond() + " &7seconds."
                                 + " Use &e/stopwatch &cstop &7to stop it."));
-                    } else if (mode == 2) {
+                    } else if (sPlayer.getMode() == 2) {
                         player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.prefix + "&9Time remaining: &a"
-                                + timeLeft.getHour() + " &ehours &a" + timeLeft.getMinute() + " &eminutes &a" + timeLeft.getSecond() + " &eseconds."));
+                                + sPlayer.getTimeLeft().getHour() + " &ehours &a" + sPlayer.getTimeLeft().getMinute() + " &eminutes &a" + sPlayer.getTimeLeft().getSecond() + " &eseconds."));
                     }
                 } else {
                     player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.prefix
@@ -73,35 +74,37 @@ public class MainCommand implements CommandExecutor {
                     if (args[1].equalsIgnoreCase("timer")) {
                         runningMap.put(player.getUniqueId(), false);
                         player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.prefix + "&etimer &cmode &7selected."));
-                        mode = 1;
+                        sPlayer.setMode(1);
                     } else if (args[1].equalsIgnoreCase("alarm")) {
                         runningMap.put(player.getUniqueId(), false);
                         player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.prefix + "&ealarm &cmode &7selected."));
-                        mode = 2;
+                        sPlayer.setMode(2);
                     } else {
                         player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.prefix + "&cError: Invalid mode selected."));
                     }
                 }
-            } else if (args.length >= 1 && args[0].equalsIgnoreCase("start") && mode == 2) { // if they /stopwatch start and or add a duration in alarm mode
+            } else if (args.length >= 1 && args[0].equalsIgnoreCase("start") && sPlayer.getMode() == 2) { // if they /stopwatch start and or add a duration in alarm mode
                 if (args.length == 1) { // if they dont add a duration
                     player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.prefix + "You need to enter a duration. Type /stopwatch to see an example."));
                 }
                 if (args.length == 2 && !runningMap.get(player.getUniqueId())) { // if they provide a duration and dont have a timer running
                     String input = args[1];
                     try {
-                        timeToRun = LocalTime.parse(input, dtf);
-                        timeLeft = timeToRun;
-                        player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.prefix + "Timer started for: " + "&a" + timeToRun.getHour() + " &7hours &a" + timeToRun.getMinute() + " &7minutes &a" + timeToRun.getSecond() + " &7seconds."));
+
+                        sPlayer.setTimeToRun(LocalTime.parse(input, dtf));
+                        sPlayer.setTimeLeft(sPlayer.getTimeToRun());
+                        player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.prefix + "Timer started for: " + "&a" + sPlayer.getTimeToRun().getHour() + " &7hours &a" +  sPlayer.getTimeToRun().getMinute() + " &7minutes &a" +  sPlayer.getTimeToRun().getSecond() + " &7seconds."));
                         runningMap.put(player.getUniqueId(), true);
                         player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 1, 3);
                         timer(player);
+
                     } catch (DateTimeException e) {
                         player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.prefix + "&cError: Invalid format."));
                     }
                 } else if (args.length == 2 && runningMap.get(player.getUniqueId())) {
                     player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.prefix + "&cError: Timer already running."));
                 }
-            } else if (args.length == 1 && args[0].equalsIgnoreCase("start") && mode == 1) { // if they /stopwatch start and or add a duration in timer mode
+            } else if (args.length == 1 && args[0].equalsIgnoreCase("start") && sPlayer.getMode() == 1) { // if they /stopwatch start and or add a duration in timer mode
                 if (!runningMap.get(player.getUniqueId())) { // if they dont have a timer running already
                     player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.prefix + "Timer started, stop using &e/stopwatch &cstop"));
                     player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 1, 3);
@@ -130,27 +133,27 @@ public class MainCommand implements CommandExecutor {
         new BukkitRunnable() {
             @Override
             public void run() {
-                if (mode == 1) {
-                    timeRan = timeRan.plusSeconds(1);
+                if (sPlayer.getMode() == 1) {
+                    sPlayer.setTimeRan(sPlayer.getTimeRan().plusSeconds(1));
                     if (!runningMap.get(player.getUniqueId())) {
-                        player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.prefix + "Timer ran for: &a" + timeRan.getHour() + " &7hours &a" + timeRan.getMinute() + " &7minutes &a" + timeRan.getSecond() + " &7seconds."));
-                        timeRan = defTime;
+                        player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.prefix + "Timer ran for: &a" + sPlayer.getTimeRan().getHour() + " &7hours &a" + sPlayer.getTimeRan().getMinute() + " &7minutes &a" + sPlayer.getTimeRan().getSecond() + " &7seconds."));
+                        sPlayer.setTimeRan(sPlayer.defTime);
                         this.cancel();
                         return;
                     }
                     if (!player.isOnline()) {
-                        timeRan = timeRan.plusSeconds(1);
+                        sPlayer.setTimeRan(sPlayer.getTimeRan().plusSeconds(1));
                         runningMap.put(player.getUniqueId(), false);
                         this.cancel();
                         return;
                     }
-                } else if (mode == 2) {
+                } else if (sPlayer.getMode() == 2) {
                     try {
                         player.sendMessage("enter try");
-                        if (timeLeft != defTime) {
-                            timeLeft = timeLeft.plusSeconds(-1);
-                            player.sendMessage("timeLeft = " + timeLeft.toString());
-                        } else if (timeLeft == defTime) {
+                        if (sPlayer.getTimeLeft() != sPlayer.defTime) {
+                            sPlayer.setTimeLeft(sPlayer.getTimeLeft().plusSeconds(-1));
+                            player.sendMessage("timeLeft = " + sPlayer.getTimeLeft().toString());
+                        } else if (sPlayer.getTimeLeft() == sPlayer.defTime) {
                             runningMap.put(player.getUniqueId(), false);
                             player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 1, 1);
                             player.sendMessage(ChatColor.translateAlternateColorCodes('&', "\n&4&l*** &e&lYOUR TIMER HAS FINISHED &4&l***\n "));
@@ -158,12 +161,12 @@ public class MainCommand implements CommandExecutor {
                             return;
                         }
                         if (!runningMap.get(player.getUniqueId())) {
-                            timeLeft = defTime;
+                            sPlayer.setTimeLeft(sPlayer.defTime);
                             this.cancel();
                             return;
                         }
                         if (!player.isOnline()) {
-                            timeLeft = defTime;
+                            sPlayer.setTimeLeft(sPlayer.defTime);
                             runningMap.put(player.getUniqueId(), false);
                             this.cancel();
                             return;
