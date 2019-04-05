@@ -1,5 +1,6 @@
 package stopwatch.terramc.us;
 
+import jdk.vm.ci.meta.Local;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -22,7 +23,8 @@ public class MainCommand implements CommandExecutor {
 
     private final HashMap<UUID, Boolean> runningMap = new HashMap<>();
     private LocalTime timeLeft;
-    private float timer = 1;
+    private LocalTime timeRan;
+    private int timer = 1;
 
     private final Main plugin;
 
@@ -109,7 +111,7 @@ public class MainCommand implements CommandExecutor {
 
                         runningMap.put(player.getUniqueId(), true);
                         player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 1, 3);
-                        timer(player, ticks);
+                        alarm(player, ticks);
 
                     } catch (DateTimeException e) {
                         player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.prefix + "&cError: Invalid format."));
@@ -123,8 +125,14 @@ public class MainCommand implements CommandExecutor {
 
             }
 
-            else if (args.length >= 1 && args[0].equalsIgnoreCase("start") && mode == 1) { // if they /stopwatch start and or add a duration in timer mode
-
+            else if (args.length == 1 && args[0].equalsIgnoreCase("start") && mode == 1) { // if they /stopwatch start and or add a duration in timer mode
+                if (!runningMap.get(player.getUniqueId())) { // if they provide duration
+                    runningMap.put(player.getUniqueId(), true);
+                    timer(player);
+                }
+                else {
+                    player.sendMessage(ChatColor.translateAlternateColorCodes('&',plugin.prefix + "&cError: Timer already running."));
+                }
             }
 
             else if (args.length == 1 && args[0].equalsIgnoreCase("stop")) { // if they choose to do /stopwatch stop
@@ -138,6 +146,10 @@ public class MainCommand implements CommandExecutor {
             } else if (args.length >= 1 && !args[0].equalsIgnoreCase("start") && !args[0].equalsIgnoreCase("stop") && !args[0].equalsIgnoreCase("menu")) {
                 sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.prefix + "Invalid argument specified. Type /stopwatch for an example."));
             }
+
+            else {
+                player.sendMessage(ChatColor.translateAlternateColorCodes('&',plugin.prefix + "Type /stopwatch menu for help."));
+            }
         } else { // if some dumbass tries to use the console like a retard
             sender.sendMessage("[StopWatch] This command only available to players.");
         }
@@ -146,7 +158,35 @@ public class MainCommand implements CommandExecutor {
 
     }
 
-    private void timer(Player player, float ticks) { // Timer runnable
+    private void timer(Player player) {
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                timer++;
+
+                if (!runningMap.get(player.getUniqueId())) {
+
+                    //timeRan = timeRan.plusSeconds(timer);
+                    player.sendMessage("ran for: " + timer);
+
+                    timer = 1;
+                    //timeRan = timeRan.plusSeconds(-timer);
+                    this.cancel();
+                    return;
+                }
+
+                if (!player.isOnline()) {
+                    timer = 1;
+                    timeRan = timeRan.plusSeconds(-timer);
+                    runningMap.put(player.getUniqueId(), false);
+                    this.cancel();
+                    return;
+                }
+            }
+        }.runTaskTimerAsynchronously(plugin, 0, 20 );
+    }
+
+    private void alarm(Player player, float ticks) { // Timer runnable
         new BukkitRunnable() {
             @Override
             public void run() {
