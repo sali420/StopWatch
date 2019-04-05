@@ -45,8 +45,8 @@ public class MainCommand implements CommandExecutor {
                                 + sPlayer.getTimeRan().getHour() + " &7hours &a" + sPlayer.getTimeRan().getMinute() + " &7minutes &a" + sPlayer.getTimeRan().getSecond() + " &7seconds."
                                 + " Use &e/stopwatch &cstop &7to stop it."));
                     } else if (sPlayer.getMode() == 2) {
-                        player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.prefix + "&9Time remaining: &a"
-                                + sPlayer.getTimeLeft().getHour() + " &ehours &a" + sPlayer.getTimeLeft().getMinute() + " &eminutes &a" + sPlayer.getTimeLeft().getSecond() + " &eseconds."));
+                        player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.prefix + "&3Time remaining: &a"
+                                + sPlayer.getTimeLeft().getHour() + " &7hours&6, &a" + sPlayer.getTimeLeft().getMinute() + " &7minutes&6, &a" + sPlayer.getTimeLeft().getSecond() + " &7seconds&6."));
                     }
                 } else {
                     player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.prefix
@@ -66,7 +66,7 @@ public class MainCommand implements CommandExecutor {
             }
             else if (args.length == 1 && args[0].equalsIgnoreCase("playtime")) { // PLAYTIME
                 sPlayer.setPlayTime(player.getTicksLived());
-                player.sendMessage(ChatColor.translateAlternateColorCodes('&',plugin.prefix + "&3Total playtime: &a" + (sPlayer.getPlayTime().getDayOfMonth() - 2)
+                player.sendMessage(ChatColor.translateAlternateColorCodes('&',plugin.prefix + "&3Total playtime: &a" + (sPlayer.getPlayTime().getDayOfMonth() - 1)
                         + " &7days&6, &a" + sPlayer.getPlayTime().getHour()
                         + " &7hours&6, &a" + sPlayer.getPlayTime().getMinute()
                         + " &7minutes&6, &a" + sPlayer.getPlayTime().getSecond()
@@ -93,7 +93,7 @@ public class MainCommand implements CommandExecutor {
                 }
             } else if (args.length >= 1 && args[0].equalsIgnoreCase("start") && sPlayer.getMode() == 2) { // if they /stopwatch start and or add a duration in alarm mode
                 if (args.length == 1) { // if they dont add a duration
-                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.prefix + "You need to enter a duration. Type /stopwatch to see an example."));
+                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.prefix + "&cError: You did not enter a duration."));
                 }
                 if (args.length == 2 && !runningMap.get(player.getUniqueId())) { // if they provide a duration and dont have a timer running
                     String input = args[1];
