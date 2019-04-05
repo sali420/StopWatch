@@ -78,10 +78,12 @@ public class MainCommand implements CommandExecutor {
                 }
                 else if (args.length == 2) {
                     if (args[1].equalsIgnoreCase("timer")) {
+                        runningMap.put(player.getUniqueId(), false);
                         player.sendMessage(ChatColor.translateAlternateColorCodes('&',plugin.prefix + "&etimer &cmode &7selected."));
                         mode = 1;
                     }
                     else if (args[1].equalsIgnoreCase("alarm")) {
+                        runningMap.put(player.getUniqueId(), false);
                         player.sendMessage(ChatColor.translateAlternateColorCodes('&',plugin.prefix + "&ealarm &cmode &7selected."));
                         mode = 2;
                     }
@@ -163,7 +165,7 @@ public class MainCommand implements CommandExecutor {
                 if (!runningMap.get(player.getUniqueId())) {
 
                     timeRan = defTime.plusSeconds(timer);
-                    player.sendMessage("ran for: &a" + timeRan.getHour() + " &7hours &a" + timeRan.getMinute() + " &7minutes &a" + timeRan.getSecond() + " &7seconds.");
+                    player.sendMessage(ChatColor.translateAlternateColorCodes('&',plugin.prefix + "ran for: &a" + timeRan.getHour() + " &7hours &a" + timeRan.getMinute() + " &7minutes &a" + timeRan.getSecond() + " &7seconds."));
 
                     timer = 1;
                     timeRan = timeRan.plusSeconds(-timer);
