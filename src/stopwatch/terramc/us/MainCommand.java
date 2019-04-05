@@ -36,7 +36,6 @@ public class MainCommand implements CommandExecutor {
 
             Player player = (Player) sender;
             sPlayer.setPlayerUUID(player.getUniqueId());
-
             runningMap.putIfAbsent(player.getUniqueId(), false); // make sure our hashmap isnt returning null values!!
 
             if (args.length == 0) { // Do this if they provide no arguments
@@ -61,8 +60,17 @@ public class MainCommand implements CommandExecutor {
                         + "\n&e/stopwatch &7- Displays the current time remaining until your timer finishes."
                         + "\n&e/stopwatch &9menu &7- Displays this help menu."
                         + "\n&e/stopwatch &9mode &b[alarm/timer] &7- Display the mode selection menu, or switch between modes by appending the mode you would like to switch to."
+                        + "\n&e/stopwatch &3playtime &7- Display your currently logged playtime."
                         + "\n&e/stopwatch &astart &b[hh:mm:ss] &7- Starts a timer/alarm. If in alarm mode, a duration must be provided using the hh:mm:ss format."
                         + "\n&e/stopwatch &cstop &7- Stops your currently running timer."));
+            }
+            else if (args.length == 1 && args[0].equalsIgnoreCase("playtime")) { // PLAYTIME
+                sPlayer.setPlayTime(player.getTicksLived());
+                player.sendMessage(ChatColor.translateAlternateColorCodes('&',plugin.prefix + "&3Total playtime: &a" + (sPlayer.getPlayTime().getDayOfMonth() - 2)
+                        + " &7days&6, &a" + sPlayer.getPlayTime().getHour()
+                        + " &7hours&6, &a" + sPlayer.getPlayTime().getMinute()
+                        + " &7minutes&6, &a" + sPlayer.getPlayTime().getSecond()
+                        + " &7seconds&6."));
             }
             if (args.length >= 1 && args[0].equalsIgnoreCase(("mode"))) { // mode selection/menu
                 if (args.length == 1) {
@@ -121,9 +129,9 @@ public class MainCommand implements CommandExecutor {
                 } else { // if there is no timer running
                     player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.prefix + "&cError: you are not currently running a timer."));
                 }
-            } else if (args.length >= 1 && !args[0].equalsIgnoreCase("start") && !args[0].equalsIgnoreCase("stop") && !args[0].equalsIgnoreCase("menu")) {
+            } /*else if (args.length >= 1 && !args[0].equalsIgnoreCase("start") && !args[0].equalsIgnoreCase("stop") && !args[0].equalsIgnoreCase("menu") && !args[0].equalsIgnoreCase("playtime")) {
                 sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.prefix + "Invalid argument specified. Type /stopwatch for an example."));
-            }
+            }*/
         } else { // if some dumbass tries to use the console like a retard
             sender.sendMessage("[StopWatch] This command only available to players.");
         }
@@ -149,10 +157,8 @@ public class MainCommand implements CommandExecutor {
                     }
                 } else if (sPlayer.getMode() == 2) {
                     try {
-                        player.sendMessage("enter try");
                         if (sPlayer.getTimeLeft() != sPlayer.defTime) {
                             sPlayer.setTimeLeft(sPlayer.getTimeLeft().plusSeconds(-1));
-                            player.sendMessage("timeLeft = " + sPlayer.getTimeLeft().toString());
                         } else if (sPlayer.getTimeLeft() == sPlayer.defTime) {
                             runningMap.put(player.getUniqueId(), false);
                             player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 1, 1);

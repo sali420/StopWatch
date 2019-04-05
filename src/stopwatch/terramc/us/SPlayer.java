@@ -1,21 +1,30 @@
 package stopwatch.terramc.us;
 
+import org.bukkit.entity.Player;
+
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.UUID;
 
 public class SPlayer {
-
-    private UUID playerUUID;
-    private int mode = 1;
-
     private final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm:ss");
     public final LocalTime defTime = LocalTime.parse("00:00:00", dtf);
+    private UUID playerUUID;
+    private int mode = 1;
+    private LocalDateTime playTime;
     private LocalTime timeLeft = defTime;
     private LocalTime timeRan = defTime;
     private LocalTime timeToRun = defTime;
 
-    public UUID getPlayerUUID() {
+    public LocalDateTime getPlayTime() {
+        return playTime;
+    } public void setPlayTime(long ticks) {
+        this.playTime = LocalDateTime.parse("2019-01-01T00:00:00");
+
+        this.playTime = playTime.plusSeconds(ticks / 20);
+    } public UUID getPlayerUUID() {
         return  playerUUID;
     } public void setPlayerUUID(UUID uuid) {
         this.playerUUID = uuid;

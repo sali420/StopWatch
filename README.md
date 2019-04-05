@@ -6,7 +6,6 @@ Planned:
 * Admins: Repeating commands (Set a command to be run x amount of times, every x amount of minutes/hours)
 * Admins: Command to kill all running timer-tasks in-case the plugin turns out to be a laggy mess
 * Repeating interval reminders (Example: every 2 hours remind me to message Multicody10 to complain about my villagers)
-* /playtime
 * In-game timers
 * life span timer - Get a read out of how long you were alive upon death/check current life span
 * More
