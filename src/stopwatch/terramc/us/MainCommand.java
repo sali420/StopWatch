@@ -18,7 +18,7 @@ import java.util.*;
 
 public class MainCommand implements CommandExecutor {
 
-    private int mode;
+    private int mode = 2; // temporary, will default to 1 once timer mode is finished
 
     private final HashMap<UUID, Boolean> runningMap = new HashMap<>();
     private LocalTime timeLeft;
@@ -77,9 +77,11 @@ public class MainCommand implements CommandExecutor {
                 else if (args.length == 2) {
                     if (args[1].equalsIgnoreCase("timer")) {
                         player.sendMessage(ChatColor.translateAlternateColorCodes('&',plugin.prefix + "&etimer &cmode &7selected."));
+                        mode = 1;
                     }
                     else if (args[1].equalsIgnoreCase("alarm")) {
                         player.sendMessage(ChatColor.translateAlternateColorCodes('&',plugin.prefix + "&ealarm &cmode &7selected."));
+                        mode = 2;
                     }
                     else {
                         player.sendMessage(ChatColor.translateAlternateColorCodes('&',plugin.prefix + "&cError: Invalid mode selected."));
@@ -87,7 +89,7 @@ public class MainCommand implements CommandExecutor {
                 }
             }
 
-            else if (args.length >= 1 && args[0].equalsIgnoreCase("start")) { // if they /stopwatch start and or add a duration
+            else if (args.length >= 1 && args[0].equalsIgnoreCase("start") && mode == 2) { // if they /stopwatch start and or add a duration in alarm mode
 
                 if (args.length == 1) { // if they dont add a duration
                     player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.prefix + "You need to enter a duration. Type /stopwatch to see an example."));
@@ -119,7 +121,13 @@ public class MainCommand implements CommandExecutor {
                     player.sendMessage(ChatColor.translateAlternateColorCodes('&',plugin.prefix + "&cError: Timer already running."));
                 }
 
-            } else if (args.length == 1 && args[0].equalsIgnoreCase("stop")) { // if they choose to do /stopwatch stop
+            }
+
+            else if (args.length >= 1 && args[0].equalsIgnoreCase("start") && mode == 1) { // if they /stopwatch start and or add a duration in timer mode
+
+            }
+
+            else if (args.length == 1 && args[0].equalsIgnoreCase("stop")) { // if they choose to do /stopwatch stop
                 if (runningMap.get(player.getUniqueId())) { // If they have a timer running... stop it
                     runningMap.put(player.getUniqueId(), false);
                     player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.prefix + "Timer stopped."));
