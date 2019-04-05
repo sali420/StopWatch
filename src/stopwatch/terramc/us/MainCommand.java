@@ -22,6 +22,8 @@ public class MainCommand implements CommandExecutor {
     private int mode = 2; // temporary, will default to 1 once timer mode is finished
 
     private final HashMap<UUID, Boolean> runningMap = new HashMap<>();
+    private DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm:ss");
+    private LocalTime defTime = LocalTime.parse("00:00:00",dtf);
     private LocalTime timeLeft;
     private LocalTime timeRan;
     private int timer = 1;
@@ -39,9 +41,7 @@ public class MainCommand implements CommandExecutor {
         if (sender instanceof Player) { // if our command user is a player
 
             Player player = (Player) sender;
-
-            // make sure our hashmap isnt returning null values!!
-            runningMap.putIfAbsent(player.getUniqueId(), false);
+            runningMap.putIfAbsent(player.getUniqueId(), false); // make sure our hashmap isnt returning null values!!
 
             if (args.length == 0) { // Do this if they provide no arguments
 
@@ -100,7 +100,6 @@ public class MainCommand implements CommandExecutor {
                 if (args.length == 2 && !runningMap.get(player.getUniqueId())) { // if they provide a duration and dont have a timer running
 
                     String input = args[1];
-                    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm:ss");
 
                     try {
                         LocalTime inputTime = LocalTime.parse(input, dtf);
@@ -127,6 +126,7 @@ public class MainCommand implements CommandExecutor {
 
             else if (args.length == 1 && args[0].equalsIgnoreCase("start") && mode == 1) { // if they /stopwatch start and or add a duration in timer mode
                 if (!runningMap.get(player.getUniqueId())) { // if they provide duration
+                    player.sendMessage(ChatColor.translateAlternateColorCodes('&',plugin.prefix + "Timer started, stop using &e/stopwatch &cstop"));
                     runningMap.put(player.getUniqueId(), true);
                     timer(player);
                 }
@@ -146,10 +146,6 @@ public class MainCommand implements CommandExecutor {
             } else if (args.length >= 1 && !args[0].equalsIgnoreCase("start") && !args[0].equalsIgnoreCase("stop") && !args[0].equalsIgnoreCase("menu")) {
                 sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.prefix + "Invalid argument specified. Type /stopwatch for an example."));
             }
-
-            else {
-                player.sendMessage(ChatColor.translateAlternateColorCodes('&',plugin.prefix + "Type /stopwatch menu for help."));
-            }
         } else { // if some dumbass tries to use the console like a retard
             sender.sendMessage("[StopWatch] This command only available to players.");
         }
@@ -166,11 +162,11 @@ public class MainCommand implements CommandExecutor {
 
                 if (!runningMap.get(player.getUniqueId())) {
 
-                    //timeRan = timeRan.plusSeconds(timer);
-                    player.sendMessage("ran for: " + timer);
+                    timeRan = defTime.plusSeconds(timer);
+                    player.sendMessage("ran for: &a" + timeRan.getHour() + " &7hours &a" + timeRan.getMinute() + " &7minutes &a" + timeRan.getSecond() + " &7seconds.");
 
                     timer = 1;
-                    //timeRan = timeRan.plusSeconds(-timer);
+                    timeRan = timeRan.plusSeconds(-timer);
                     this.cancel();
                     return;
                 }
