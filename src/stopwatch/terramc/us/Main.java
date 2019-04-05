@@ -10,6 +10,7 @@ public class Main extends JavaPlugin {
     @Override
     public void onEnable() {
         new MainCommand(this); // initializing our MainCommand
+        new PlayTimeCommand(this);
     }
 
     @Override

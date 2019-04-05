@@ -22,7 +22,6 @@ public class SPlayer {
         return playTime;
     } public void setPlayTime(long ticks) {
         this.playTime = LocalDateTime.parse("2019-01-01T00:00:00");
-
         this.playTime = playTime.plusSeconds(ticks / 20);
     } public UUID getPlayerUUID() {
         return  playerUUID;

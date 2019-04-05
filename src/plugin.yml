@@ -1,9 +1,12 @@
 name: StopWatch
-version: 0.3.5
+version: 0.3.7
 author: DevGang
 main: stopwatch.terramc.us.Main
 
 commands:
+  playtime:
+    description: Displays playtime
+    usage: /playtime
   stopwatch:
     description: Displays the time remaining on your timer.
     usage: /stopwatch
@@ -13,9 +16,6 @@ commands:
   stopwatch mode:
     description: Switches between the various modes available, or displays a help menu if no argument is provided.
     usage: /stopwatch mode [alarm/timer]
-  stopwatch playtime:
-    description: Displays your currently logged playtime.
-    usage: /stopwatch playtime
   stopwatch start:
     description: Begins a timer.
     usage: /stopwatch start hh:mm:ss
