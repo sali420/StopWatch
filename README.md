@@ -11,6 +11,7 @@ Planned:
 * More
 
 Todo:
+* Playtime others
 * Add maxTime LocalTime and add checks for alarm and timer modes
 * Update error messages, take a second loop at some of the condition flows
 * Digital clock
