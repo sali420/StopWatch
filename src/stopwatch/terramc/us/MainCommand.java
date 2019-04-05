@@ -1,6 +1,5 @@
 package stopwatch.terramc.us;
 
-import jdk.vm.ci.meta.Local;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -22,8 +21,8 @@ public class MainCommand implements CommandExecutor {
     private int mode = 1; // temporary mode = timer
 
     private final HashMap<UUID, Boolean> runningMap = new HashMap<>();
-    private DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm:ss");
-    private LocalTime defTime = LocalTime.parse("00:00:00",dtf);
+    private final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm:ss");
+    private final LocalTime defTime = LocalTime.parse("00:00:00",dtf);
     private LocalTime timeLeft;
     private LocalTime timeRan;
     private int timer = 1;
@@ -64,12 +63,12 @@ public class MainCommand implements CommandExecutor {
                         + "\n&e/stopwatch &7- Displays the current time remaining until your timer finishes."
                         + "\n&e/stopwatch &9menu &7- Displays this help menu."
                         + "\n&e/stopwatch &9mode &b[alarm/timer] &7- Display the mode selection menu, or switch between modes by appending the mode you would like to switch to."
-                        + "\n&e/stopwatch &astart &bhh:mm:ss &7- Starts a timer/alarm. If in alarm mode, a duration must be provided using the hh:mm:ss format."
+                        + "\n&e/stopwatch &astart &b[hh:mm:ss] &7- Starts a timer/alarm. If in alarm mode, a duration must be provided using the hh:mm:ss format."
                         + "\n&e/stopwatch &cstop &7- Stops your currently running timer."));
 
             }
 
-            if (args.length >= 1 && args[0].equalsIgnoreCase(("mode"))) {
+            if (args.length >= 1 && args[0].equalsIgnoreCase(("mode"))) { // mode selection/menu
 
                 if (args.length == 1) {
                     player.sendMessage(ChatColor.translateAlternateColorCodes('&',plugin.prefix + "&9&lMode Selection Menu."
@@ -157,7 +156,7 @@ public class MainCommand implements CommandExecutor {
 
     }
 
-    private void timer(Player player) {
+    private void timer(Player player) { // timer runnable
         new BukkitRunnable() {
             @Override
             public void run() {
@@ -185,7 +184,7 @@ public class MainCommand implements CommandExecutor {
         }.runTaskTimerAsynchronously(plugin, 0, 20 );
     }
 
-    private void alarm(Player player, float ticks) { // Timer runnable
+    private void alarm(Player player, float ticks) { // alarm runnable
         new BukkitRunnable() {
             @Override
             public void run() {
