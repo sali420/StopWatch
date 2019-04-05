@@ -46,7 +46,9 @@ public class MainCommand implements CommandExecutor {
                 if (runningMap.get(player.getUniqueId())) {
 
                     if (mode == 1) {
-                        player.sendMessage(ChatColor.translateAlternateColorCodes('&',plugin.prefix + "You have a Timer running. Use &e/stopwatch &cstop &7to stop it."));
+                        player.sendMessage(ChatColor.translateAlternateColorCodes('&',plugin.prefix + "You have a timer running for: &a"
+                                + timeRan.getHour() + " &7hours &a" + timeRan.getMinute() + " &7minutes &a" + timeRan.getSecond() + " &7seconds."
+                                + " Use &e/stopwatch &cstop &7to stop it."));
                     }
                     else if (mode == 2) {
                         player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.prefix + "&9Time remaining: &a"
@@ -166,10 +168,9 @@ public class MainCommand implements CommandExecutor {
             @Override
             public void run() {
                 timer++;
+                timeRan = defTime.plusSeconds(timer);
 
                 if (!runningMap.get(player.getUniqueId())) {
-
-                    timeRan = defTime.plusSeconds(timer);
                     player.sendMessage(ChatColor.translateAlternateColorCodes('&',plugin.prefix + "Timer ran for: &a" + timeRan.getHour() + " &7hours &a" + timeRan.getMinute() + " &7minutes &a" + timeRan.getSecond() + " &7seconds."));
 
                     timer = 1;
