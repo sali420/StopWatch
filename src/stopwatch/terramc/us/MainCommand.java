@@ -15,7 +15,6 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
-
 public class MainCommand implements CommandExecutor {
 
     private int mode = 1; // temporary mode = timer
@@ -127,8 +126,9 @@ public class MainCommand implements CommandExecutor {
             }
 
             else if (args.length == 1 && args[0].equalsIgnoreCase("start") && mode == 1) { // if they /stopwatch start and or add a duration in timer mode
-                if (!runningMap.get(player.getUniqueId())) { // if they provide duration
+                if (!runningMap.get(player.getUniqueId())) { // if they dont have a timer running already
                     player.sendMessage(ChatColor.translateAlternateColorCodes('&',plugin.prefix + "Timer started, stop using &e/stopwatch &cstop"));
+                    player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 1, 3);
                     runningMap.put(player.getUniqueId(), true);
                     timer(player);
                 }
@@ -165,7 +165,7 @@ public class MainCommand implements CommandExecutor {
                 if (!runningMap.get(player.getUniqueId())) {
 
                     timeRan = defTime.plusSeconds(timer);
-                    player.sendMessage(ChatColor.translateAlternateColorCodes('&',plugin.prefix + "ran for: &a" + timeRan.getHour() + " &7hours &a" + timeRan.getMinute() + " &7minutes &a" + timeRan.getSecond() + " &7seconds."));
+                    player.sendMessage(ChatColor.translateAlternateColorCodes('&',plugin.prefix + "Timer ran for: &a" + timeRan.getHour() + " &7hours &a" + timeRan.getMinute() + " &7minutes &a" + timeRan.getSecond() + " &7seconds."));
 
                     timer = 1;
                     timeRan = timeRan.plusSeconds(-timer);
