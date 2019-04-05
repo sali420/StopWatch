@@ -8,10 +8,12 @@ Planned:
 * Repeating interval reminders (Example: every 2 hours remind me to message Multicody10 to complain about my villagers)
 * /playtime
 * In-game timers
+* life span timer - Get a read out of how long you were alive upon death/check current life span
 * More
 
 Todo:
 * Add maxTime LocalTime and add checks for alarm and timer modes
+* Update error messages, take a second loop at some of the condition flows
 * Digital clock
 * Permissions
 * Config.myl - Editable prefix, sounds & alert alert message
