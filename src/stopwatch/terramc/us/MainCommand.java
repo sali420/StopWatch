@@ -45,8 +45,13 @@ public class MainCommand implements CommandExecutor {
 
                 if (runningMap.get(player.getUniqueId())) {
 
-                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.prefix + "&9Time remaining: &a"
-                            + timeLeft.getHour() + " &ehours &a" + timeLeft.getMinute() + " &eminutes &a" + timeLeft.getSecond() + " &eseconds."));
+                    if (mode == 1) {
+                        player.sendMessage(ChatColor.translateAlternateColorCodes('&',plugin.prefix + "You have a Timer running for: &a" + timeRan.getHour() + " &7hours &a" + timeRan.getMinute() + " &7minutes &a" + timeRan.getSecond() + " &7seconds. Use &e/stopwatch &cstop &7to stop it."));
+                    }
+                    else if (mode == 2) {
+                        player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.prefix + "&9Time remaining: &a"
+                                + timeLeft.getHour() + " &ehours &a" + timeLeft.getMinute() + " &eminutes &a" + timeLeft.getSecond() + " &eseconds."));
+                    }
 
                 } else {
                     player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.prefix
